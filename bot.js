@@ -238,9 +238,7 @@ client.on('channelUpdate', (oldChannel, newChannel) => {
     if(oldChannel.type === 'text') {
         var channelType = 'Text';
     }else
-    if(oldChannel.type === 'voice') {
-        var channelType = 'Voice';
-    }else
+
     if(oldChannel.type === 'category') {
         var channelType = 'Category';
     }
