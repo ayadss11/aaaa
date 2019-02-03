@@ -1,93 +1,107 @@
-const Discord = require("discord.js");
+const prefix ="!";
+const Discord = require('discord.js');
 const client = new Discord.Client();
-client.on('message',async message => {
-  if(message.author.bot) return;
-var prefix = "!"
-if(message.content.indexOf(prefix) !== 0) return;
-const args = message.content.slice(prefix.length).trim().split(/ +/g);
-const command = args.shift().toLowerCase();
-if(command === "start") {
-var title = args[0].split('-').join(" ");
-if(args[2]) {
-  message.channel.send(` \`\`\`MD
-  # Title format <word>-<word>-<word> 
-  < do not use spaces use - insted
-   \`\`\``);
-}
-var time = args[1].split(":");
-var sec = time[3];
-var min = time[2];
-var hou = time[1];
-var day = time[0];
 
-if((hou * 1) > 24) {
-  message.channel.send(` \`\`\`MD
-  # time format <days> : <hours> : <minutes> : <secondes>
-  < hours must be 24 or less
-   \`\`\``);
-}
-else if((sec * 1) > 60) {
-  message.channel.send(` \`\`\`MD
-  # time format <days> : <hours> : <minutes> : <secondes>
-  < minutes must be 60 or less 
-  \`\`\``);
-}
-else if((min * 1) > 60) {
-  message.channel.send(` \`\`\`MD
-  # time format <days> : <hours> : <minutes> : <secondes>
-  < seconds must be 60 or less
-  \`\`\``);
-} 
-else  {
+client.on('ready', () => {
+ console.log("هلا التوت شغل تمم "); 
+console.log("log");
+});
 
-var upgradeTime = sec;
-upgradeTime = upgradeTime * 2 / 2 + (min * 60);
-upgradeTime = upgradeTime * 2 / 2 + (hou * 60 * 60);
-upgradeTime = upgradeTime * 2 / 2 + (day * 24 * 60 * 60);
-var seconds = upgradeTime;
-var duration = (upgradeTime * 1000)
-  if(!message.guild.member(message.author).hasPermission('MANAGE_GUILD')) return message.channel.send(':heavy_multiplication_x:| **s You Dont Have Premission**');
-  if(!args) return message.channel.send(`**Use : #start  <Presentse> <Time>**`);
-  if(!title) return message.channel.send(`**Use : **\`#start ${args[0]} Minutes\`** <Presentse>**`);
-  if(!isNaN(args[1])) return message.channel.send(':heavy_multiplication_x:| **The Time Be Nambers `` Do the Commend Agin``**');
-        let giveEmbed = new Discord.RichEmbed()
-      .setAuthor(message.guild.name, message.guild.iconURL)
-      .setDescription(`**${title}** \nReact Whit ًںژپ To Enter! \n**Ends  after   ${day} day  ${hou} hour  ${min} minute ${sec} second**`)
-      .setFooter(message.author.username, message.author.avatarURL);
-      message.channel.send(' :heavy_check_mark: **Giveaway Created** :heavy_check_mark:' , {embed: giveEmbed}).then(m => {
-          message.delete();
-          m.react('ًںژپ');
-              var giveAwayCut = setInterval(function() {
-                  var days        = Math.floor(seconds/24/60/60);
-                  var hoursLeft   = Math.floor((seconds) - (days*86400));
-                  var hours       = Math.floor(hoursLeft/3600);
-                  var minutesLeft = Math.floor((hoursLeft) - (hours*3600));
-                  var minutes     = Math.floor(minutesLeft/60);
-                  var remainingSeconds = seconds % 60;
-                  if (seconds != 0) {
-                    seconds--;
-                  }
-              let updateGiveEmbed = new Discord.RichEmbed()
-              .setAuthor(message.guild.name, message.guild.iconURL)
-              .setDescription(`**${title}** \nReact With ًںژپ To Enter! \n**Ends  after   ${days} day  ${hours} hour  ${minutes} minute ${remainingSeconds} second**`)
-              .setFooter(message.author.username, message.author.avatarURL);
-              m.edit(updateGiveEmbed)
-            }, 1000);
-         setTimeout(() => {
-          clearInterval(giveAwayCut)
-           let users = m.reactions.get("ًںژپ").users;
-           let list = users.array().filter(u => u.id !== client.user.id);
-           let gFilter = list[Math.floor(Math.random() * list.length) + 0]
-           let endEmbed = new Discord.RichEmbed()
-           endEmbed.setAuthor(message.author.username, message.author.avatarURL)
-           endEmbed.setTitle(title)
-           endEmbed.addField('Giveaway End !ًںژپ',`Winners : ${gFilter}`)
-         m.edit('** ًںژپ GIVEAWAY ENDED ًںژپ**' , {embed: endEmbed});
-         },duration);
-       });
-  }
+
+
+
+client.on('message', message => {
+  var prefix = "!";
+  if (message.author.omar) return;
+  if (!message.content.startsWith(prefix)) return;
+  var command = message.content.split(" ")[0];
+  command = command.slice(prefix.length);
+  var args = message.content.split(" ").slice(1);
+  if (command == "kick") {
+   if(!message.channel.guild) return message.reply('** This command only for servers :x:**');
+   const guild = message.guild;
+  if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return message.reply("**You Don't Have ` KICK_MEMBERS ` Permission**");
+  if(!message.guild.member(client.user).hasPermission("KICK_MEMBERS")) return message.reply("**I Don't Have ` KICK_MEMBERS ` Permission**");
+  var user = message.mentions.users.first();
+  var reason = message.content.split(" ").slice(2).join(" ");
+  if (message.mentions.users.size < 1) return message.reply("**__Mention__ A Member To Kick !**");
+  if (!message.guild.member(user).kickable) return message.reply("**Can't Kick A Higher Role Than Me !**");
+  message.channel.send(`**:white_check_mark: ${user.tag} Kicked Form The Server By : <@${message.author.id}> ! :airplane:** `)
+  guild.owner.send(`سيرفر : ${guild.name}
+**تم طرد** :${user.tag}  
+**بواسطة** : <@${message.author.id}>`).then(()=>{
+message.guild.member(user).kick();
+  })
 }
 });
+
+
+
+
+
+
+ client.on("message", message => {
+ if(!message.channel.guild) return;  
+  if (message.author.bot) return;
+ 
+  let command = message.content.split(" ")[0];
+ 
+  if (message.content.split(" ")[0].toLowerCase() === prefix + "unmute") {
+        if (!message.member.hasPermission('MANAGE_ROLES')) return;
+  let user = message.mentions.users.first();
+  let modlog = client.channels.find('name', 'log');
+  let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
+  if (!muteRole) return message.reply(" I Can’t Find 'Muted' Role ").catch(console.error).then(message => message.delete(4000))
+  if (message.mentions.users.size < 1) return message.reply(' Error : ``Mention a User``').catch(console.error).then(message => message.delete(4000))
+  if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return;
+ 
+  if (message.guild.member(user).removeRole(muteRole.id)) {
+      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
+  } else {
+    message.guild.member(user).removeRole(muteRole).then(() => {
+      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
+    });
+  }
+ 
+};
+ 
+});
+ 
+ 
+client.on('message',function(message) {
+ if(!message.channel.guild) return;    let messageArray = message.content.split(' ');
+    let muteRole =  message.guild.roles.find('name', 'Muted');
+    let muteMember = message.mentions.members.first();
+    let muteReason = messageArray[2];
+    let muteDuration = messageArray[3];
+ if (message.content.split(" ")[0].toLowerCase() === prefix + "mute") {
+           
+  if (message.author.bot) return;
+       if(!muteRole) return message.guild.createRole({name: 'Muted'}).then(message.guild.channels.forEach(chan => chan.overwritePermissions(muteRole, {SEND_MESSAGES:false,ADD_REACTIONS:false})));
+       if(!message.guild.member(message.author).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : You Need `` MANAGE_ROLES ``Permission ');
+       if(!message.guild.member(client.user).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : I Don’t Have `` MANAGE_ROLES ``Permission ');
+       if(!muteMember) return message.channel.send(' Error : ``Mention a User``').then(message => message.delete(4000))
+       if(!muteReason) return message.channel.send(' Error : ``Supply a Reason``').then(message => message.delete(4000))
+       if(!muteDuration) return message.channel.send(' Error : `` Supply Mute Time `` \n Ex: #mute @user reason 1m ').then(message => message.delete(4000))
+       if(!muteDuration.match(/[1-7][s,m,h,d,w]/g)) return message.channel.send(' Error : `` Invalid Mute Duration``').then(message => message.delete(4000))
+       message.channel.send(`${muteMember} Has Been Muted.`).then(message => message.delete(5000))
+       muteMember.addRole(muteRole);
+       muteMember.setMute(true)
+       .then(() => { setTimeout(() => {
+           muteMember.removeRole(muteRole)
+           muteMember.setMute(false)
+       }, mmss(muteDuration));
+       });
+   }
+});
+
+
+
+
+
+
+
+
 
 
 client.login(process.env.TOKEN); 
