@@ -10,117 +10,94 @@ console.log("log");
 
 
 
-client.on('message', message => {
-  var prefix = "!";
-  if (message.author.omar) return;
-  if (!message.content.startsWith(prefix)) return;
-  var command = message.content.split(" ")[0];
-  command = command.slice(prefix.length);
-  var args = message.content.split(" ").slice(1);
-  if (command == "kick") {
-   if(!message.channel.guild) return message.reply('** This command only for servers :x:**');
-   const guild = message.guild;
-  if(!message.guild.member(message.author).hasPermission("KICK_MEMBERS")) return message.reply("**You Don't Have ` KICK_MEMBERS ` Permission**");
-  if(!message.guild.member(client.user).hasPermission("KICK_MEMBERS")) return message.reply("**I Don't Have ` KICK_MEMBERS ` Permission**");
-  var user = message.mentions.users.first();
-  var reason = message.content.split(" ").slice(2).join(" ");
-  if (message.mentions.users.size < 1) return message.reply("**__Mention__ A Member To Kick !**");
-  if (!message.guild.member(user).kickable) return message.reply("**Can't Kick A Higher Role Than Me !**");
-  message.channel.send(`**:white_check_mark: ${user.tag} Kicked Form The Server By : <@${message.author.id}> ! :airplane:** `)
-  guild.owner.send(`سيرفر : ${guild.name}
-**تم طرد** :${user.tag}  
-**بواسطة** : <@${message.author.id}>`).then(()=>{
-message.guild.member(user).kick();
-  })
-}
-});
 
 
 
-
-
-
- client.on("message", message => {
- if(!message.channel.guild) return;  
-  if (message.author.bot) return;
- 
-  let command = message.content.split(" ")[0];
- 
-  if (message.content.split(" ")[0].toLowerCase() === prefix + "unmute") {
-        if (!message.member.hasPermission('MANAGE_ROLES')) return;
-  let user = message.mentions.users.first();
-  let modlog = client.channels.find('name', 'log');
-  let muteRole = client.guilds.get(message.guild.id).roles.find('name', 'Muted');
-  if (!muteRole) return message.reply(" I Can’t Find 'Muted' Role ").catch(console.error).then(message => message.delete(4000))
-  if (message.mentions.users.size < 1) return message.reply(' Error : ``Mention a User``').catch(console.error).then(message => message.delete(4000))
-  if (!message.guild.member(client.user).hasPermission('MANAGE_ROLES_OR_PERMISSIONS')) return;
- 
-  if (message.guild.member(user).removeRole(muteRole.id)) {
-      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
-  } else {
-    message.guild.member(user).removeRole(muteRole).then(() => {
-      return message.reply("User Has Been UnMuted.").catch(console.error).then(message => message.delete(4000))
-    });
+giftKeys = {};
+let devs = ["441584713799303183","483462854809354251"]; // تقدر تضيف ايدي ثالث نفس الفكره تسوي كذا let devs = ["ايديك","ايدي خويك او إي ادمن","ايدي خويك الثالث"];
+client.on("message", msg =>{
+  let args = msg.content.split(" ").slice(1)[0];
+  let cmd = msg.content.split(' ')[0]
+  if(cmd === `${prefix}giftR`){
+  let roleW = msg.mentions.roles.first();
+  if(!devs.includes(msg.author.id)){
+    let embed = new Discord.RichEmbed()
+    .setColor("#42f4f4")
+    .setTitle(`:x: - انت لاتمتلك الصلاحية`);
+    msg.reply(embed).then( z => z.delete(3000));
+     return
   }
- 
+  if(!roleW) {
+    let embed = new Discord.RichEmbed()
+    .setColor("#42f4f4")
+    .setTitle(`:x: - منشن الرتبة \`${prefix}giftR <@admin-role>\``);
+    msg.reply(embed).then( z => z.delete(3000)); return
+  };
+  let role = msg.guild.roles.find(`name`, roleW.name);
+  if(!role) {
+    let embed = new Discord.RichEmbed()
+    .setColor("#42f4f4")
+    .setTitle(`:x: - Could't find \`${roleW.name}\` role.`);
+  msg.reply(embed).then( msgs => msgs.delete(3000));
+  return
+  }
+  var randomkeys = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var gift = "";
+  for (var y = 0; y < 16; y++) {   ///16
+    gift +=  `${randomkeys.charAt(Math.floor(Math.random() * randomkeys.length))}`;
+  }
+  giftKeys[gift] = role;
+  let embed = new Discord.RichEmbed()
+  .setColor("#42f4f4")
+  .setTitle(`:ok_hand: - **تم ارسآل الكود على الخاص**`);
+  msg.reply(embed);
+  let embed2= new Discord.RichEmbed()
+  .setAuthor(msg.author.username, msg.author.displayAvatarURL)
+  .setThumbnail(msg.author.avatarURL)
+  .addField("**Key Of Gift**", gift,true)
+  .addField("Role",giftKeys[gift].name,true)
+  .addField("This Key Made by", msg.author, true)
+  .addField("The Room", msg.channel , true)
+  .setTimestamp()
+  .setFooter(client.user.username,client.user.displayAvatarURL)  
+  msg.author.send(embed2);
 };
+if( cmd === `${prefix}used`){
  
+  if(!args) {  
+    let embed = new Discord.RichEmbed()
+    .setColor("#42f4f4")
+    .setTitle(`:x: - **الرجاء ادخال كود الهدية** \`${prefix}used <Key>\``)
+    msg.reply(embed).then( z => z.delete(3000));
+    return
+}
+let embed = new Discord.RichEmbed()
+.setTitle(`**جاري التحقق من الكود**`)
+.setColor("#42f4f4")
+  msg.reply(embed).then( msgs =>{
+  if(giftKeys[args]){
+    let hav = msg.member.roles.find(`name`, giftKeys[args].name);
+    if(hav){
+    let embed = new Discord.RichEmbed()
+    .setTitle(`:x: - **انت تمتلك هذه الرتبة مسبقًا**  \`${giftKeys[args].name}\``)
+    .setColor("#42f4f4")
+    msgs.edit(embed)
+    return
+    }
+    let embed = new Discord.RichEmbed()
+    .setTitle(`:tada: - **مبروك تم اعطائك رتبة** \`${giftKeys[args].name}\``)
+    .setColor("#42f4f4")
+    msgs.edit(embed)
+    msg.member.addRole(giftKeys[args]);
+    delete giftKeys[args]
+  }else{
+    let embed = new Discord.RichEmbed()
+    .setTitle(`:x: - **الكود غير صيحيح أو انه مستعمل من قبل**`)
+    .setColor("#42f4f4")
+    msgs.edit(embed)
+  }});
+};
 });
- 
- 
-client.on('message',function(message) {
- if(!message.channel.guild) return;    let messageArray = message.content.split(' ');
-    let muteRole =  message.guild.roles.find('name', 'Muted');
-    let muteMember = message.mentions.members.first();
-    let muteReason = messageArray[2];
-    let muteDuration = messageArray[3];
- if (message.content.split(" ")[0].toLowerCase() === prefix + "mute") {
-           
-  if (message.author.bot) return;
-       if(!muteRole) return message.guild.createRole({name: 'Muted'}).then(message.guild.channels.forEach(chan => chan.overwritePermissions(muteRole, {SEND_MESSAGES:false,ADD_REACTIONS:false})));
-       if(!message.guild.member(message.author).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : You Need `` MANAGE_ROLES ``Permission ');
-       if(!message.guild.member(client.user).hasPermission("MANAGE_ROLES")) return message.channel.send(' Error : I Don’t Have `` MANAGE_ROLES ``Permission ');
-       if(!muteMember) return message.channel.send(' Error : ``Mention a User``').then(message => message.delete(4000))
-       if(!muteReason) return message.channel.send(' Error : ``Supply a Reason``').then(message => message.delete(4000))
-       if(!muteDuration) return message.channel.send(' Error : `` Supply Mute Time `` \n Ex: #mute @user reason 1m ').then(message => message.delete(4000))
-       if(!muteDuration.match(/[1-7][s,m,h,d,w]/g)) return message.channel.send(' Error : `` Invalid Mute Duration``').then(message => message.delete(4000))
-       message.channel.send(`${muteMember} Has Been Muted.`).then(message => message.delete(5000))
-       muteMember.addRole(muteRole);
-       muteMember.setMute(true)
-       .then(() => { setTimeout(() => {
-           muteMember.removeRole(muteRole)
-           muteMember.setMute(false)
-       }, mmss(muteDuration));
-       });
-   }
-});
-
-
-
-
-
-client.on('message',async message => {
-  if(message.content === '!unbanall') {
-    var user = message.mentions.users.first();
-    if(!message.member.hasPermission('ADMINISTRATOR')) return message.channel.send('❌|**`ADMINISTRATOR`لا توجد لديك صلاحية `**');
-    if(!message.guild.member(client.user).hasPermission("BAN_MEMBERS")) return message.reply("**I Don't Have ` BAN_MEMBERS ` Permission**");
-    const guild = message.guild;
-
-  message.guild.fetchBans().then(ba => {
-  ba.forEach(ns => {
-  message.guild.unban(ns);
-  const embed= new Discord.RichEmbed()
-        .setColor("RANDOM")
-        .setDescription(`**:white_check_mark: Has Been Unban For All**`)
-    .setFooter('Requested by '+message.author.username, message.author.avatarURL)
-  message.channel.sendEmbed(embed);
-  guild.owner.send(`سيرفر : ${guild.name}
-  **تم فك الباند عن الجميع بواسطة** : <@${message.author.id}>`) 
-  });
-  });
-  }
-  });
-
 
 
 
