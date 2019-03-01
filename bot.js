@@ -102,10 +102,10 @@ let embed = new Discord.RichEmbed()
 
 
 client.on("guildMemberAdd", (member) => {
-  client.channels.get('544575559514980402').edit({name : `『 الأعضاء ↩ ${member.guild.memberCount} 』`});
+  client.channels.get('550919638364717087').edit({name : `『 الأعضاء ↩ ${member.guild.memberCount} 』`});
   })
   client.on("guildMemberRemove", (member) => {
-  client.channels.get('544575559514980402').edit({name : `『 الأعضاء ↩ ${member.guild.memberCount} 』`});
+  client.channels.get('550919638364717087').edit({name : `『 الأعضاء ↩ ${member.guild.memberCount} 』`});
   })
 
 
